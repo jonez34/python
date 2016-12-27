@@ -1,0 +1,8 @@
+{
+    "EmailTo":"youraddress@mail.com"
+    "EmailFrom":"youraddress@mail.com"
+    "EmailSubject":"your email subject"
+    "EmailMessage":"your email message"
+    "SMSPhoneNumber":"5555555555"
+    "SMSMessage":"your sms message"
+}

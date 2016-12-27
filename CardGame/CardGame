@@ -1,0 +1,186 @@
+__author__ = 'hjones2368'
+import random
+import math
+import sys
+
+
+#Starts class Card, Builds a card
+class Card:
+# Sets rank and suit of card
+ def __init__(self, suit, rank_value):
+  self._rank = self.getRankName(rank_value)
+  self._suit = suit
+  self._rank_value = rank_value
+# Changes value to name for higher level card
+ def getRankName(self, rank_value):
+    if(rank_value == 11):
+        return "Jack"
+    if(rank_value == 12):
+        return "Queen"
+    if(rank_value == 13):
+        return "King"
+    if(rank_value == 14):
+        return "Ace"
+
+    return str(rank_value)
+
+#combines rank and suit
+ def __str__(self):
+     return self._rank + " of " + self._suit
+#checks cards againt each other
+ def __lt__(self, anotherCard):
+     return self._rank_value < anotherCard._rank_value
+     pass
+ def __le__(self, anotherCard):
+  return self._rank_value <= anotherCard._rank_value
+
+ def __eq__(self, anotherCard):
+  return self._rank_value == anotherCard._rank_value
+
+ def __ne__(self, anotherCard):
+  return self._rank_value != anotherCard._rank_value
+
+ def __gt__(self, anotherCard):
+  return self._rank_value > anotherCard._rank_value
+
+ def __ge__(self, anotherCard):
+  return self._rank_value >= anotherCard._rank_value
+
+
+# End class Card
+
+# builds a deck of cards
+def buildDeck():
+  suits  = ["Clubs", "Diamonds", "Spades", "Hearts"]
+  deckofcards = []
+  for suit in suits:
+    for rank_value in range(2,15):
+       newCard = Card(suit, rank_value)
+       deckofcards.append(newCard)
+
+  return deckofcards
+#end build deck
+
+#shuffle deck
+def shuffleDeck(deck):
+    random.shuffle(deck)
+
+    return deck
+#end shuffledeck
+def printCards(cards):
+ for card in cards:
+    printCard(card)
+
+def printCard(card):
+ print("{0:s}".format(str(card)))
+
+def printPlayers(players):
+    number_of_players = len(players)
+
+
+    header = ""
+    for x in range(1, number_of_players +1):
+        header += 'Player {0:n}'.format(x).center(20)
+
+    print(header)
+
+    #firstcard = ""
+    #selects the number of cards that goes out to each player
+    cards_per_player = int(math.floor(26))
+        #notes this was to deal out all card to players(52 / number_of_players))
+
+    for cardnum in range(0, cards_per_player):
+        players_card = ""
+        for x in range(0, number_of_players):
+            players_card += str(players[x][cardnum]).center(20)
+        print(players_card)
+
+
+
+        # Determines whether the player wants to continue. If so they press the
+   # Enter key and the function calls main to start all over.
+
+
+    #for x in range(0, number_of_players):
+       #firstcard += str(players[x][0]).center(20)
+
+    #print(firstcard)
+#end print player
+
+
+def main():
+    args = sys.argv[1:]
+    if not args:
+     print 'usage: [--summaryfile] file [file ...]'
+     sys.exit(1)
+    if args[0] == '--summaryfile':
+
+     del args[0]
+
+
+
+    print('You are playing War')
+    myDeck = buildDeck()
+    shuffleDeck(myDeck)
+    number_of_players = 2
+    #deal cards
+    players =[]
+    # initialize each players hand
+    for x in range(0, number_of_players):
+        players.append([])
+    #deal to players, loop through the while deck, and deal one card to each player
+    #as we pass through the desk
+    for x in range(0,len(myDeck)):
+        playerNumber = x % number_of_players
+        dealThisCard = myDeck.pop()
+        #print("Player {0:n} gets '{1:s}'".format(playerNumber, str(dealThisCard)))
+        players[playerNumber].append(dealThisCard)
+    sorted(players)
+    printPlayers(players)
+
+    Winner1 = 0
+    Winner2 = 0
+    Rounds = []
+
+    for round in range(0, len(players[0])):
+     if players[0][round] == players[1][round]:
+      result = ("Round is a draw")
+      print(result)
+      Rounds.append(result)
+     elif players[0][round] > players[1][round]:
+      result = ("Player 1 is the winner of the Round. " + str(players[0][round]) + " Was the winning card.")
+      print(result)
+      Winner1 = Winner1 + 1
+      Rounds.append(result)
+     else:
+      result = ("Player 2 is the winner of the Round. " + str(players[1][round]) + " Was the winning card.")
+      print(result)
+      Winner2 = Winner2 + 1
+      Rounds.append(result)
+
+    if Winner1 == Winner2:
+        result = ("Game is a Draw")
+        print(result)
+        Rounds.append(result)
+    elif Winner1 >Winner2:
+        result = ("Player 1 is the winner of the Game. " + str(Winner1) + " rounds to " + str(Winner2))
+        print(result)
+        Rounds.append(result)
+    else:
+        result = ("Player 2 is the winner of the Game. " + str(Winner2) + " rounds to " + str(Winner1))
+        print(result)
+        Rounds.append(result)
+
+    filename = args[0]
+    savegame = raw_input ("Do you want to save the Game? Enter Yes or No")
+    if savegame == "yes" or savegame == "Yes":
+        text = '\n'.join(Rounds)
+        outf = open(filename + '.summary', 'w')
+        outf.write(text + '\n')
+        outf.close()
+    else:
+        pass
+
+
+
+main()
